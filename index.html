@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>MFA Guard — Register Number Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><div class="shield">✓</div><div><b>MFA Guard</b><span>Physical Token Lab</span></div></div>
+      <nav>
+        <button class="nav active" data-page="login">⌂ <span>Login</span></button>
+        <button class="nav" data-page="token">◉ <span>Token Simulator</span></button>
+        <button class="nav" data-page="tests">✓ <span>Test Cases</span></button>
+        <button class="nav" data-page="architecture">⌘ <span>Architecture</span></button>
+      </nav>
+      <div class="side-card">
+        <div class="dot"></div>
+        <b>Simulator Online</b>
+        <small>Local demo environment</small>
+      </div>
+      <footer>MFA Physical Token Simulator<br><small>Educational Prototype</small></footer>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div><span class="eyebrow">SECURITY LAB / PROTOTYPE</span><h1 id="pageTitle">Register Number Login</h1></div>
+        <div class="top-status"><span class="pulse"></span> SYSTEM READY</div>
+      </header>
+
+      <section id="login" class="page active-page">
+        <div class="hero">
+          <div>
+            <span class="tag">MULTI-FACTOR AUTHENTICATION</span>
+            <h2>Register Number + <em>OTP + MFA Token</em></h2>
+            <p>First verify the registered mobile number with an OTP. Then enter the MFA physical-token code.</p>
+          </div>
+          <div class="hero-token"><div class="mini-screen"><strong id="heroOtp">------</strong><small>MFA TOKEN</small></div></div>
+        </div>
+
+        <div class="login-layout">
+          <div class="card auth-card">
+            <div class="card-head">
+              <div><span class="section-no">01</span><h3>Registered Number</h3></div>
+              <span class="lock">▣</span>
+            </div>
+
+            <div id="numberStep">
+              <label>REGISTER NUMBER</label>
+              <input id="registerNumber" inputmode="numeric" maxlength="10" placeholder="Enter 10-digit register number">
+              <button class="primary" id="sendOtpBtn">SEND OTP <span>→</span></button>
+              <div id="sendResult" class="result neutral">Enter your registered number to receive an OTP.</div>
+            </div>
+
+            <div id="otpStep" class="hidden-step">
+              <label>OTP SENT TO</label>
+              <div class="masked-number" id="maskedNumber">+91 XXXXX XXXXX</div>
+              <label>ENTER OTP</label>
+              <div class="otp-input-row">
+                <input id="smsOtpInput" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit OTP">
+                <span id="otpCountdown">60s</span>
+              </div>
+              <button class="primary" id="verifyOtpBtn">VERIFY OTP <span>→</span></button>
+              <button class="secondary" id="resendOtpBtn">RESEND OTP</button>
+              <div id="otpResult" class="result neutral">OTP verification is required before MFA token verification.</div>
+              <div id="demoOtp" class="demo-otp hidden-step"></div>
+            </div>
+
+            <div id="tokenStep" class="hidden-step">
+              <div class="verified-banner">✓ REGISTER NUMBER VERIFIED</div>
+              <label>MFA TOKEN</label>
+              <div class="otp-input-row">
+                <input id="mfaInput" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit MFA token">
+                <span id="mfaCountdown">30s</span>
+              </div>
+              <button class="primary" id="verifyMfaBtn">VERIFY MFA TOKEN <span>→</span></button>
+              <div id="mfaResult" class="result neutral">Enter the current token shown on the physical-token simulator.</div>
+            </div>
+          </div>
+
+          <div class="card token-card">
+            <div class="card-head"><div><span class="section-no">02</span><h3>Physical Token</h3></div><span class="live">LIVE</span></div>
+            <div class="physical-token">
+              <div class="token-top"><span>MFA-TOKEN</span><span>● SECURE</span></div>
+              <div class="token-display"><strong id="tokenCode">------</strong><small>VALID FOR <b id="tokenSeconds">30</b> SEC</small></div>
+              <div class="token-bottom"><span>SECURE AUTH</span><span>USB / FOB</span></div>
+            </div>
+            <button class="secondary" id="newTokenBtn">GENERATE NEW TOKEN</button>
+            <div class="token-note">The MFA token rotates every 30 seconds.</div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span>AUTHENTICATION</span><b id="authState">NUMBER REQUIRED</b><small id="authSub">Waiting for registered number</small></div>
+          <div class="stat"><span>OTP STATUS</span><b class="good" id="otpState">NOT SENT</b><small>SMS verification step</small></div>
+          <div class="stat"><span>MFA STATUS</span><b id="mfaState">LOCKED</b><small>Available after OTP verification</small></div>
+          <div class="stat"><span>ATTEMPTS</span><b id="attempts">0</b><small>Current session</small></div>
+        </div>
+      </section>
+
+      <section id="token" class="page">
+        <div class="section-banner"><span class="tag">TOKEN ENGINE</span><h2>Time-Based MFA Token Simulator</h2><p>The prototype generates a changing 6-digit token and tracks its validity window.</p></div>
+        <div class="token-large card">
+          <div class="physical-token big">
+            <div class="token-top"><span>MFA-TOKEN / DEVICE-01</span><span>● SECURE</span></div>
+            <div class="token-display"><strong id="bigToken">------</strong><small>EXPIRES IN <b id="bigSeconds">30</b> SECONDS</small></div>
+            <div class="token-bottom"><span>SHA-BASED DEMO</span><span>LOCAL SIMULATION</span></div>
+          </div>
+          <div class="token-info">
+            <h3>Authentication flow</h3>
+            <div class="step"><b>01</b><span>Enter the registered mobile number.</span></div>
+            <div class="step"><b>02</b><span>Receive and verify the SMS OTP.</span></div>
+            <div class="step"><b>03</b><span>Enter the current 6-digit MFA token.</span></div>
+            <div class="step"><b>04</b><span>Access is granted only when all factors pass.</span></div>
+            <button class="primary" id="tokenPageBtn">ROTATE TOKEN →</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="tests" class="page">
+        <div class="section-banner"><span class="tag">VALIDATION</span><h2>Authentication Test Cases</h2><p>Scenarios for number, OTP and MFA-token verification.</p></div>
+        <div class="card table-card">
+          <table><thead><tr><th>TEST</th><th>INPUT / ACTION</th><th>EXPECTED RESULT</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr><td>TC-01</td><td>Valid register number</td><td>OTP is generated/sent</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>TC-02</td><td>Invalid register number</td><td>OTP request rejected</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>TC-03</td><td>Wrong OTP</td><td>Number verification rejected</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>TC-04</td><td>Correct OTP + wrong MFA token</td><td>Authentication rejected</td><td><span class="pass">PASS</span></td></tr>
+            <tr><td>TC-05</td><td>Correct OTP + current MFA token</td><td>Access granted</td><td><span class="pass">PASS</span></td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <section id="architecture" class="page">
+        <div class="section-banner"><span class="tag">SYSTEM DESIGN</span><h2>Authentication Architecture</h2><p>Register number → SMS OTP → MFA token → access decision.</p></div>
+        <div class="architecture card">
+          <div class="arch-node"><b>USER</b><span>Register Number</span></div><i>→</i>
+          <div class="arch-node"><b>SMS OTP</b><span>Send OTP<br>Verify OTP</span></div><i>→</i>
+          <div class="arch-node"><b>MFA TOKEN</b><span>6-digit code<br>30-sec validity</span></div><i>→</i>
+          <div class="arch-node"><b>RESULT</b><span>Access granted<br>or rejected</span></div>
+        </div>
+        <div class="grid two">
+          <div class="card"><span class="section-no">01</span><h3>Factor 1 — Registered Number</h3><p>The user's registered number is the first identity input. In this simulator, use a valid 10-digit Indian mobile number.</p></div>
+          <div class="card"><span class="section-no">02</span><h3>Factor 2 — SMS OTP</h3><p>A six-digit OTP is generated after the number is accepted. The browser prototype displays a demo OTP; a real system must send it through an SMS provider.</p></div>
+          <div class="card"><span class="section-no">03</span><h3>Factor 3 — MFA Token</h3><p>The physical-token simulator produces a changing six-digit code. The token must be correct and still within its 30-second validity window.</p></div>
+          <div class="card"><span class="section-no">04</span><h3>Access Decision</h3><p>Access is granted only after the registered number, SMS OTP and current MFA token are all verified successfully.</p></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
